@@ -1,0 +1,7 @@
+{
+  "_comment": "OPTIONAL. Copy to ~/.claude/baton/config.json to enable Linear sync. When a project you run /baton in lives under one of these roots, /baton also posts the handoff summary as a comment on its Linear issue (resolved from an arg, .baton/config.json, or the git branch). Omit this file, or leave the array empty, for file-only handoffs (the default).",
+  "linearSyncRoots": [
+    "~/Documents/your-work-org",
+    "~/code/another-org"
+  ]
+}

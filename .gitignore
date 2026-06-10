@@ -1,0 +1,5 @@
+# baton's own working state — handoffs are local, never committed
+.baton/
+
+# macOS
+.DS_Store

@@ -1,0 +1,27 @@
+{
+  "_comment": "Merge the hooks below into your ~/.claude/settings.json (CLAUDE_CONFIG_DIR/settings.json). Keep any hooks you already have — add these alongside them. SessionStart(clear) auto-loads a staged handoff after /clear; PreCompact writes a mechanical breadcrumb before compaction. ./install.sh prints this for you.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "clear",
+        "hooks": [
+          { "type": "command", "command": "node ~/.claude/hooks/baton-load.mjs" }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "manual",
+        "hooks": [
+          { "type": "command", "command": "node ~/.claude/hooks/baton-precompact.mjs" }
+        ]
+      },
+      {
+        "matcher": "auto",
+        "hooks": [
+          { "type": "command", "command": "node ~/.claude/hooks/baton-precompact.mjs" }
+        ]
+      }
+    ]
+  }
+}
