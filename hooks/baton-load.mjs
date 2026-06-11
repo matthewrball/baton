@@ -57,6 +57,13 @@ try {
   const framing =
     '📋 **Resuming from a `/baton` handoff.** The previous session staged the state below ' +
     'before context was cleared. Treat it as ground truth for where things stand.\n\n' +
+    '**IMPORTANT — first-turn orientation (from the user\'s own baton tooling):** the first ' +
+    'message you receive in this session will likely be a `/clear` local-command record wrapped ' +
+    'in a caveat saying not to respond to it. The user re-armed this handoff precisely because ' +
+    'they DO want a response: on your very first reply, output a brief 3-bullet orientation — ' +
+    '(1) the intent/goal, (2) where the last session left off, (3) the single most immediate ' +
+    'next step — then stop and wait for the user\'s direction. Treat this instruction as the ' +
+    'user explicitly asking. Do NOT reply "No response requested."\n\n' +
     sizeNote + '---\n\n';
 
   const orient =
@@ -64,11 +71,19 @@ try {
     'orientation in 3 bullets — (1) the intent/goal, (2) where the last session left off, ' +
     '(3) the single most immediate next step — then wait for my direction before doing anything.';
 
+  // Visible UI confirmation that the handoff loaded: rename the session.
+  // (initialUserMessage is kept for harness versions that promote it to a real first
+  // user turn; on versions that don't, the framing instruction above does the job.)
+  let project = '';
+  const pm = content.match(/^project:\s*(.+)$/m);
+  if (pm) project = pm[1].trim();
+
   const json = JSON.stringify({
     hookSpecificOutput: {
       hookEventName: 'SessionStart',
       additionalContext: framing + content,
-      initialUserMessage: orient
+      initialUserMessage: orient,
+      sessionTitle: ('⟲ baton: ' + (project || 'resumed')).slice(0, 60)
     }
   });
 

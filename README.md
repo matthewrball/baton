@@ -81,6 +81,14 @@ Off by default. To have `/baton` also post the handoff summary as a comment on a
 
 When a project lives under one of those roots, `/baton` resolves the ticket (from an arg like `/baton ABC-123`, `.baton/config.json`, or the git branch) and comments the summary on it. Resolution is best-effort and never blocks the file handoff.
 
+## Troubleshooting
+
+**"I ran `/baton`, then `/clear`, and nothing happened."**
+Check the session title — if it changed to `⟲ baton: <project>`, the handoff **did** load; the model just didn't speak first. The injected framing instructs it to open with a 3-bullet orientation, but if your session is silent anyway, the context is still there: type anything ("where were we?") and it will answer fully oriented, or run `/baton resume`. Root cause: after `/clear`, the model's first turn is the `/clear` command record itself, which carries a "do not respond" caveat that can suppress the greeting on some Claude Code versions.
+
+**The handoff loaded into the wrong project / didn't load at all.**
+The hook looks for `<cwd>/.baton/PENDING.md` in the directory Claude Code was launched from. Run `/baton status` to see whether a handoff is armed; an already-consumed handoff lives in `.baton/.consumed/` and can be re-armed by copying it back to `.baton/PENDING.md`.
+
 ## Design notes
 
 - **`/clear` is yours.** The model cannot wipe its own context — that single keystroke is the only manual step in the loop.

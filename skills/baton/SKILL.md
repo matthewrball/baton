@@ -94,7 +94,7 @@ Do these in order:
 
 ### `resume` — manual re-orient (fallback)
 
-The hook handles resume automatically after `/clear`. Use this only if the hook didn't fire or you're mid-session: read the newest `PROJECT_DIR/.baton/*.md` (prefer `PENDING.md` if present) and give the 3-bullet orientation (intent / where we left off / immediate next step).
+The hook handles resume automatically after `/clear`: the handoff is injected into context, the session is renamed to `⟲ baton: <project>` (visible confirmation it loaded), and the first reply should be a 3-bullet orientation. If the new session looks silent anyway, the context is still loaded — just ask "where were we?", or run this verb. `resume` reads the newest `PROJECT_DIR/.baton/*.md` (prefer `PENDING.md`, else the latest file in `.baton/.consumed/`) and gives the 3-bullet orientation (intent / where we left off / immediate next step).
 
 ### `view` — open the dashboard
 
@@ -111,6 +111,7 @@ Report: estimated current context tokens (from the gauge if visible), whether `.
 ## Notes & edge cases
 
 - **The one manual step.** Claude cannot wipe its own context — `/clear` is yours to type. Everything else is automated.
+- **The "No response requested." trap.** After `/clear`, the model's first turn is the `/clear` local-command record, which carries a "do not respond" caveat — without countermeasures the model stays silent even though the handoff loaded fine. The load hook's injected framing explicitly instructs the model to give the 3-bullet orientation on its first turn anyway, and the session rename (`⟲ baton: <project>`) is the visible proof of load. If you ever see a silent session post-`/clear`, the context is there — just type anything.
 - **Multiple lanes / concurrent sessions** in one project share `.baton/`. Timestamped history files never collide; `PENDING.md` is last-save-wins. If you run parallel lanes, save from the lane you want to resume *last* before clearing.
 - **Don't clobber the HUD.** This skill never touches `statusLine` or `~/.claude/.omc/hud-config.json`.
 - **PreCompact breadcrumbs** (`PRECOMPACT-*.md`) are mechanical insurance written by `baton-precompact.mjs`, not curated handoffs; the render script ignores them.
