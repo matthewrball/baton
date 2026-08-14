@@ -1,0 +1,27 @@
+{
+  "_comment": "Merge these hooks into CLAUDE_CONFIG_DIR/settings.json (default: ~/.claude/settings.json). Keep existing hooks. The enhanced adapter installer prints this snippet.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "clear",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/baton-load.mjs\"" }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "manual",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/baton-precompact.mjs\"" }
+        ]
+      },
+      {
+        "matcher": "auto",
+        "hooks": [
+          { "type": "command", "command": "node \"${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hooks/baton-precompact.mjs\"" }
+        ]
+      }
+    ]
+  }
+}

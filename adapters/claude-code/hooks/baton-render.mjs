@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // baton-render.mjs — generate the human-facing HTML views from the markdown source of truth.
 //   - per-project:  <projectDir>/.baton/index.html
-//   - global:       ~/.claude/baton/index.html  (+ registry.json)
+//   - global:       $CLAUDE_CONFIG_DIR/baton/index.html  (+ registry.json)
 // Markdown is the source of truth; this script never mutates the .md handoffs.
 // Usage: node baton-render.mjs [projectDir]   (defaults to $CLAUDE_PROJECT_DIR or cwd)
 
@@ -9,7 +9,8 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync, rename
 import { join, basename } from 'node:path';
 import { homedir } from 'node:os';
 
-const GLOBAL_DIR = join(homedir(), '.claude', 'baton');
+const CLAUDE_DIR = process.env.CLAUDE_CONFIG_DIR || join(homedir(), '.claude');
+const GLOBAL_DIR = join(CLAUDE_DIR, 'baton');
 const REGISTRY = join(GLOBAL_DIR, 'registry.json');
 
 const esc = (s = '') => String(s)
@@ -141,7 +142,7 @@ function projectPage(name, dir, items) {
     chips(it.meta, it.file) + renderBody(it.body) + `</div>`).join('');
   return page(`baton — ${name}`,
     `<h1>${esc(name)}</h1><div class="muted">${esc(dir)} · ${items.length} handoff(s) · ` +
-    `<a href="${fileUrl(join(homedir(), '.claude', 'baton', 'index.html'))}">all projects →</a></div>${cards}`);
+    `<a href="${fileUrl(join(GLOBAL_DIR, 'index.html'))}">all projects →</a></div>${cards}`);
 }
 
 function globalPage(registry) {

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Baton"
+  short_description: "Save and resume work across agent sessions"
+  default_prompt: "Use $baton to save a compact handoff for a fresh agent session."
+policy:
+  allow_implicit_invocation: false

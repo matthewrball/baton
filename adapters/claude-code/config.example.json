@@ -1,0 +1,7 @@
+{
+  "_comment": "OPTIONAL. Copy to CLAUDE_CONFIG_DIR/baton/config.json (default: ~/.claude/baton/config.json) to enable Linear sync in the enhanced Claude Code adapter. Omit this file for local-only handoffs.",
+  "linearSyncRoots": [
+    "~/Documents/your-work-org",
+    "~/code/another-org"
+  ]
+}

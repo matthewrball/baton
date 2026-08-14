@@ -4,9 +4,10 @@
 // This is NOT a curated handoff (a hook has no model) — run `/baton` for that.
 // Never throws / blocks; always exits 0.
 
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { basename, join } from 'node:path';
 import { execSync } from 'node:child_process';
+import { ensureBatonIgnored, isGitWorkTree } from './baton-safety.mjs';
 
 const sh = (cmd, cwd) => {
   try { return execSync(cmd, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 4000 }).trim(); }
@@ -26,10 +27,12 @@ try {
     } catch { /* ignore */ }
   }
 
+  const isGit = isGitWorkTree(cwd);
+  if (!ensureBatonIgnored(cwd)) process.exit(0);
+
   const batonDir = join(cwd, '.baton');
   mkdirSync(batonDir, { recursive: true });
 
-  const isGit = sh('git rev-parse --is-inside-work-tree', cwd) === 'true';
   const branch = isGit ? sh('git rev-parse --abbrev-ref HEAD', cwd) : '';
   const status = isGit ? sh('git status --short', cwd).split('\n').slice(0, 30).join('\n') : '';
   const recent = sh("find . -type f -not -path '*/.git/*' -not -path '*/node_modules/*' -not -path '*/.baton/*' -mtime -1 2>/dev/null | head -20", cwd);
@@ -40,7 +43,7 @@ try {
 type: precompact-breadcrumb
 trigger: ${trigger}
 created: ${now}
-project_path: ${cwd}
+project: ${JSON.stringify(basename(cwd))}
 ---
 # Precompact breadcrumb (${trigger})
 
